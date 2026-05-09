@@ -1,10 +1,6 @@
 import { useSyncExternalStore } from "react";
 import { Spinner } from "@nous-research/ui/ui/components/spinner";
-import {
-  getPluginComponent,
-  getPluginLoadError,
-  onPluginRegistered,
-} from "./registry";
+import { getPluginComponent, getPluginLoadError, onPluginRegistered } from "./registry";
 import { useI18n } from "@/i18n";
 import { cn } from "@/lib/utils";
 import type { Translations } from "@/i18n/types";
@@ -33,10 +29,7 @@ export function PluginPage({ name }: { name: string }) {
     const message = formatPluginError(loadError, t);
     return (
       <div
-        className={cn(
-          "max-w-lg p-4",
-          "font-mondwest text-sm tracking-[0.08em] text-midground/80",
-        )}
+        className={cn("max-w-lg p-4", "text-sm tracking-[0.08em] text-midground/80")}
         role="alert"
       >
         {message}
@@ -46,10 +39,7 @@ export function PluginPage({ name }: { name: string }) {
 
   return (
     <div
-      className={cn(
-        "flex items-center gap-2 p-4",
-        "font-mondwest text-sm tracking-[0.1em] text-midground/60",
-      )}
+      className={cn("flex items-center gap-2 p-4", "text-sm tracking-[0.1em] text-midground/60")}
     >
       <Spinner className="shrink-0" />
       <span>{t.common.loading}</span>

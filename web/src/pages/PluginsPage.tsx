@@ -103,10 +103,7 @@ export default function PluginsPage() {
     setRescanBusy(true);
     try {
       const rc = await api.rescanPlugins();
-      showToast(
-        `${t.pluginsPage.refreshDashboard} (${rc.count})`,
-        "success",
-      );
+      showToast(`${t.pluginsPage.refreshDashboard} (${rc.count})`, "success");
       await loadHub();
     } catch (e) {
       showToast(e instanceof Error ? e.message : "Rescan failed", "error");
@@ -119,8 +116,7 @@ export default function PluginsPage() {
     setProviderBusy(true);
     try {
       await api.savePluginProviders({
-        memory_provider:
-          memorySel === MEMORY_PROVIDER_BUILTIN ? "" : memorySel,
+        memory_provider: memorySel === MEMORY_PROVIDER_BUILTIN ? "" : memorySel,
         context_engine: contextSel,
       });
       showToast(t.pluginsPage.savedProviders, "success");
@@ -152,7 +148,6 @@ export default function PluginsPage() {
       <PluginSlot name="plugins:top" />
 
       <div className={cn("flex w-full flex-col gap-8")}>
-
         {providers && (
           <Card>
             <CardHeader>
@@ -163,49 +158,48 @@ export default function PluginsPage() {
             </CardHeader>
 
             <CardContent className="flex flex-col gap-6">
-
               <div className="grid gap-6 sm:grid-cols-2 max-w-full">
-              <div className="grid gap-2 min-w-0">
-                <Label htmlFor="mem-provider">{t.pluginsPage.memoryProviderLabel}</Label>
+                <div className="grid gap-2 min-w-0">
+                  <Label htmlFor="mem-provider">{t.pluginsPage.memoryProviderLabel}</Label>
 
-                <Select
-                  id="mem-provider"
-                  className="w-full"
-                  value={memorySel}
-                  onValueChange={setMemorySel}
-                >
-                  <SelectOption value={MEMORY_PROVIDER_BUILTIN}>
-                    {`(${t.pluginsPage.providerDefaults})`}
-                  </SelectOption>
-
-                  {providers.memory_options.map((o) => (
-                    <SelectOption key={o.name} value={o.name}>
-                      {o.name}
+                  <Select
+                    id="mem-provider"
+                    className="w-full"
+                    value={memorySel}
+                    onValueChange={setMemorySel}
+                  >
+                    <SelectOption value={MEMORY_PROVIDER_BUILTIN}>
+                      {`(${t.pluginsPage.providerDefaults})`}
                     </SelectOption>
-                  ))}
-                </Select>
-              </div>
 
-              <div className="grid gap-2 min-w-0">
-                <Label htmlFor="ctx-engine">{t.pluginsPage.contextEngineLabel}</Label>
-
-                <Select
-                  id="ctx-engine"
-                  className="w-full"
-                  value={contextSel}
-                  onValueChange={setContextSel}
-                >
-                  <SelectOption value="compressor">compressor</SelectOption>
-
-                  {providers.context_options
-                    .filter((o) => o.name !== "compressor")
-                    .map((o) => (
+                    {providers.memory_options.map((o) => (
                       <SelectOption key={o.name} value={o.name}>
                         {o.name}
                       </SelectOption>
                     ))}
-                </Select>
-              </div>
+                  </Select>
+                </div>
+
+                <div className="grid gap-2 min-w-0">
+                  <Label htmlFor="ctx-engine">{t.pluginsPage.contextEngineLabel}</Label>
+
+                  <Select
+                    id="ctx-engine"
+                    className="w-full"
+                    value={contextSel}
+                    onValueChange={setContextSel}
+                  >
+                    <SelectOption value="compressor">compressor</SelectOption>
+
+                    {providers.context_options
+                      .filter((o) => o.name !== "compressor")
+                      .map((o) => (
+                        <SelectOption key={o.name} value={o.name}>
+                          {o.name}
+                        </SelectOption>
+                      ))}
+                  </Select>
+                </div>
               </div>
 
               <Button
@@ -229,11 +223,8 @@ export default function PluginsPage() {
             </p>
           </CardHeader>
 
-
           <CardContent className="flex flex-col gap-4">
-
             <div className="flex flex-col gap-2">
-
               <Label htmlFor="install-url">{t.pluginsPage.identifierLabel}</Label>
 
               <Input
@@ -246,11 +237,8 @@ export default function PluginsPage() {
               />
             </div>
 
-
             <div className="flex flex-wrap items-center gap-8">
-
               <div className="flex items-center gap-3">
-
                 <Switch checked={installForce} onCheckedChange={setInstallForce} />
 
                 <span className="text-[0.7rem] tracking-[0.06em] text-midforeground/85 normal-case">
@@ -259,7 +247,6 @@ export default function PluginsPage() {
               </div>
 
               <div className="flex items-center gap-3">
-
                 <Switch checked={installEnable} onCheckedChange={setInstallEnable} />
 
                 <span className="text-[0.7rem] tracking-[0.06em] text-midforeground/85 normal-case">
@@ -289,34 +276,22 @@ export default function PluginsPage() {
         </Card>
 
         <div className="flex flex-col gap-3">
-
-          <h3 className="font-mondwest text-[0.75rem] tracking-[0.12em] text-midground/85">
+          <h3 className="text-[0.75rem] tracking-[0.12em] text-midground/85">
             {t.pluginsPage.pluginListHeading}
           </h3>
 
           {loading ? (
-
             <div className="flex items-center gap-2 py-8 text-[0.8rem] text-midforeground/65">
-
               <Spinner />
               <span>{t.common.loading}</span>
             </div>
           ) : rows.length === 0 ? (
-
             <p className="text-[0.75rem] text-midforeground/55 normal-case">{t.common.noResults}</p>
           ) : (
-
             <ul className="flex flex-col gap-3">
-
               {rows.map((row: HubAgentPluginRow) => (
-
                 <li key={row.name}>
-
-
-                  <PluginRowCard
-                    {...{ row, rowBusy, setRuntimeLoading, showToast, t }}
-                  />
-
+                  <PluginRowCard {...{ row, rowBusy, setRuntimeLoading, showToast, t }} />
                 </li>
               ))}
             </ul>
@@ -324,30 +299,17 @@ export default function PluginsPage() {
         </div>
 
         {(hub?.orphan_dashboard_plugins?.length ?? 0) > 0 ? (
-
-
           <div className="flex flex-col gap-3 opacity-95">
-
-            <h3 className="font-mondwest text-[0.75rem] tracking-[0.12em] text-midforeground/85">
+            <h3 className="text-[0.75rem] tracking-[0.12em] text-midforeground/85">
               {t.pluginsPage.orphanHeading}
             </h3>
 
             <ul className="flex flex-col gap-2 rounded border border-current/15 p-4">
-
               {hub!.orphan_dashboard_plugins.map((m) => (
-
                 <li className="text-[0.7rem] normal-case opacity-85" key={m.name}>
-
-
                   {m.label ?? m.name} — {m.description || m.tab?.path}
-
-
                   {!m.tab?.hidden ? (
-
-
                     <Link className="ml-3 inline-flex items-center gap-1 underline" to={m.tab.path}>
-
-
                       <ExternalLink className="h-3 w-3 opacity-65" />
 
                       {t.pluginsPage.openTab}
@@ -367,30 +329,20 @@ export default function PluginsPage() {
 }
 
 interface PluginRowCardProps {
-
   row: HubAgentPluginRow;
   rowBusy: string | null;
-  setRuntimeLoading: (
-    name: string,
-    fn: () => Promise<unknown>,
-  ) => Promise<void>;
+  setRuntimeLoading: (name: string, fn: () => Promise<unknown>) => Promise<void>;
 
   showToast: (msg: string, variant: "success" | "error") => void;
   t: Translations;
 }
 
 function PluginRowCard(props: PluginRowCardProps) {
-  const {
-    row,
-    rowBusy,
-    setRuntimeLoading,
-    showToast,
-    t,
-  } = props;
+  const { row, rowBusy, setRuntimeLoading, showToast, t } = props;
 
   const dm = row.dashboard_manifest;
 
-  const tabPath = dm?.tab && !dm.tab.hidden ? dm.tab.override ?? dm.tab.path : null;
+  const tabPath = dm?.tab && !dm.tab.hidden ? (dm.tab.override ?? dm.tab.path) : null;
 
   const busy = rowBusy === row.name;
 
@@ -402,26 +354,16 @@ function PluginRowCard(props: PluginRowCardProps) {
         : "outline";
 
   return (
-
     <Card className={cn(busy ? "opacity-70" : undefined)}>
-
-
       <CardContent className="flex flex-col gap-4 px-6 py-4">
-
-
         <div className="flex flex-wrap items-start justify-between gap-4">
-
-
           <div className="min-w-0 flex-1">
-
             <div className="flex flex-wrap items-center gap-3">
-
               <span className="truncate font-semibold">{row.name}</span>
 
               <Badge tone="outline">
                 {t.pluginsPage.sourceBadge}: {row.source}
               </Badge>
-
 
               <Badge tone="outline">v{row.version || "—"}</Badge>
 
@@ -433,7 +375,6 @@ function PluginRowCard(props: PluginRowCardProps) {
             </div>
 
             {row.description ? (
-
               <p className="mt-2 max-w-2xl text-[0.7rem] tracking-[0.06em] text-midforeground/75 normal-case">
                 {row.description}
               </p>
@@ -441,8 +382,6 @@ function PluginRowCard(props: PluginRowCardProps) {
           </div>
 
           <div className="flex flex-wrap items-center gap-2 shrink-0">
-
-
             <Button
               disabled={busy || row.runtime_status === "enabled"}
               ghost
@@ -456,7 +395,6 @@ function PluginRowCard(props: PluginRowCardProps) {
             >
               {t.pluginsPage.enableRuntime}
             </Button>
-
 
             <Button
               disabled={busy || row.runtime_status === "disabled"}
@@ -473,12 +411,11 @@ function PluginRowCard(props: PluginRowCardProps) {
             </Button>
 
             {tabPath ? (
-
               <Link
                 className={cn(
                   "inline-flex items-center rounded-none px-3 py-1.5",
                   "border border-current/25 hover:bg-current/10",
-                  "font-mondwest text-[0.65rem] tracking-[0.1em] uppercase",
+                  "text-[0.65rem] tracking-[0.1em] uppercase",
                 )}
                 to={tabPath}
               >
@@ -487,7 +424,6 @@ function PluginRowCard(props: PluginRowCardProps) {
             ) : null}
 
             {row.can_update_git ? (
-
               <Button
                 disabled={busy}
                 ghost
@@ -509,7 +445,9 @@ function PluginRowCard(props: PluginRowCardProps) {
                 disabled={busy}
                 ghost
                 size="sm"
-                title={row.user_hidden ? t.pluginsPage.showInSidebar : t.pluginsPage.hideFromSidebar}
+                title={
+                  row.user_hidden ? t.pluginsPage.showInSidebar : t.pluginsPage.hideFromSidebar
+                }
                 onClick={() => {
                   void setRuntimeLoading(row.name, async () => {
                     await api.setPluginVisibility(row.name, !row.user_hidden);
@@ -526,8 +464,6 @@ function PluginRowCard(props: PluginRowCardProps) {
             ) : null}
 
             {row.can_remove ? (
-
-
               <Button
                 destructive
                 disabled={busy}
@@ -546,7 +482,6 @@ function PluginRowCard(props: PluginRowCardProps) {
                   });
                 }}
               >
-
                 {busy ? <Spinner /> : <Trash2 className="h-3.5 w-3.5" />}
               </Button>
             ) : null}
@@ -554,28 +489,21 @@ function PluginRowCard(props: PluginRowCardProps) {
         </div>
 
         {dm?.slots?.length ? (
-
           <p className="text-[0.65rem] tracking-[0.05em] text-midforeground/55 normal-case">
             {t.pluginsPage.dashboardSlots}: {dm.slots.join(", ")}
           </p>
         ) : null}
 
         {row.auth_required ? (
-          <CommandBlock
-            label={t.pluginsPage.authRequiredHint}
-            code={row.auth_command}
-          />
+          <CommandBlock label={t.pluginsPage.authRequiredHint} code={row.auth_command} />
         ) : null}
 
         {!row.has_dashboard_manifest && !dm ? (
-
-
           <p className="text-[0.65rem] italic text-midforeground/45 normal-case">
             {t.pluginsPage.noDashboardTab}
           </p>
         ) : null}
       </CardContent>
-
     </Card>
   );
 }

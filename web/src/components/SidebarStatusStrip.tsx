@@ -33,7 +33,7 @@ export function SidebarStatusStrip() {
         "focus-visible:ring-inset",
       )}
     >
-      <div className="flex flex-col gap-1 font-mondwest text-[0.55rem] leading-snug tracking-[0.12em]">
+      <div className="flex flex-col gap-1 text-[0.55rem] leading-snug tracking-[0.12em]">
         <p className="break-words">
           <span className="text-muted-foreground/50">{gatewayStatusLabel}</span>{" "}
           <span className={cn("font-medium", gw.tone)}>{gw.label}</span>
@@ -41,9 +41,7 @@ export function SidebarStatusStrip() {
 
         <p className="break-words">
           <span className="text-muted-foreground/50">{activeSessionsLabel}</span>{" "}
-          <span className="tabular-nums text-muted-foreground/70">
-            {status.active_sessions}
-          </span>
+          <span className="tabular-nums text-muted-foreground/70">{status.active_sessions}</span>
         </p>
       </div>
     </Link>

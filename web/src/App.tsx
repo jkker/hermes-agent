@@ -6,14 +6,7 @@ import {
   type ComponentType,
   type ReactNode,
 } from "react";
-import {
-  Routes,
-  Route,
-  NavLink,
-  Navigate,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Routes, Route, NavLink, Navigate, useLocation, useNavigate } from "react-router-dom";
 import {
   Activity,
   BarChart3,
@@ -49,7 +42,6 @@ import { SelectionSwitcher } from "@nous-research/ui/ui/components/selection-swi
 import { Spinner } from "@nous-research/ui/ui/components/spinner";
 import { Typography } from "@/components/NouiTypography";
 import { cn } from "@/lib/utils";
-import { Backdrop } from "@/components/Backdrop";
 import { SidebarFooter } from "@/components/SidebarFooter";
 import { SidebarStatusStrip } from "@/components/SidebarStatusStrip";
 import { PageHeaderProvider } from "@/contexts/PageHeaderProvider";
@@ -190,10 +182,7 @@ function resolveIcon(name: string): ComponentType<{ className?: string }> {
   return ICON_MAP[name] ?? Puzzle;
 }
 
-function buildNavItems(
-  builtIn: NavItem[],
-  manifests: PluginManifest[],
-): NavItem[] {
+function buildNavItems(builtIn: NavItem[], manifests: PluginManifest[]): NavItem[] {
   const items = [...builtIn];
 
   for (const manifest of manifests) {
@@ -347,8 +336,7 @@ export default function App() {
   );
 
   const builtinNav = useMemo(
-    () =>
-      embeddedChat ? [CHAT_NAV_ITEM, ...BUILTIN_NAV_REST] : BUILTIN_NAV_REST,
+    () => (embeddedChat ? [CHAT_NAV_ITEM, ...BUILTIN_NAV_REST] : BUILTIN_NAV_REST),
     [embeddedChat],
   );
 
@@ -356,10 +344,7 @@ export default function App() {
     () => partitionSidebarNav(builtinNav, manifests),
     [builtinNav, manifests],
   );
-  const routes = useMemo(
-    () => buildRoutes(builtinRoutes, manifests),
-    [builtinRoutes, manifests],
-  );
+  const routes = useMemo(() => buildRoutes(builtinRoutes, manifests), [builtinRoutes, manifests]);
   const pluginTabMeta = useMemo(
     () =>
       manifests
@@ -399,11 +384,11 @@ export default function App() {
   return (
     <div
       data-layout-variant={layoutVariant}
-      className="font-mondwest flex h-dvh max-h-dvh min-h-0 flex-col overflow-hidden bg-black uppercase text-midground antialiased"
+      className="flex h-dvh max-h-dvh min-h-0 flex-col overflow-hidden bg-black uppercase text-midground antialiased"
     >
       <SelectionSwitcher />
-      <Backdrop />
-      <PluginSlot name="backdrop" />
+      {/* <Backdrop /> */}
+      {/* <PluginSlot name="backdrop" /> */}
 
       <header
         className={cn(
@@ -443,10 +428,7 @@ export default function App() {
           ghost
           aria-label={t.app.closeNavigation}
           onClick={closeMobile}
-          className={cn(
-            "lg:hidden fixed inset-0 z-40 p-0 block",
-            "bg-black/60 backdrop-blur-sm",
-          )}
+          className={cn("lg:hidden fixed inset-0 z-40 p-0 block", "bg-black/60 backdrop-blur-sm")}
         />
       )}
 
@@ -507,12 +489,7 @@ export default function App() {
             >
               <ul className="flex flex-col">
                 {sidebarNav.coreItems.map((item) => (
-                  <SidebarNavLink
-                    closeMobile={closeMobile}
-                    item={item}
-                    key={item.path}
-                    t={t}
-                  />
+                  <SidebarNavLink closeMobile={closeMobile} item={item} key={item.path} t={t} />
                 ))}
               </ul>
 
@@ -525,7 +502,7 @@ export default function App() {
                   <span
                     className={cn(
                       "px-5 pt-2.5 pb-1",
-                      "font-mondwest text-[0.6rem] tracking-[0.15em] uppercase opacity-30",
+                      "text-[0.6rem] tracking-[0.15em] uppercase opacity-30",
                     )}
                     id="hermes-sidebar-plugin-nav-heading"
                   >
@@ -534,12 +511,7 @@ export default function App() {
 
                   <ul className="flex flex-col">
                     {sidebarNav.pluginItems.map((item) => (
-                      <SidebarNavLink
-                        closeMobile={closeMobile}
-                        item={item}
-                        key={item.path}
-                        t={t}
-                      />
+                      <SidebarNavLink closeMobile={closeMobile} item={item} key={item.path} t={t} />
                     ))}
                   </ul>
                 </div>
@@ -580,8 +552,7 @@ export default function App() {
               <div
                 className={cn(
                   "w-full min-w-0",
-                  (isDocsRoute || isChatRoute) &&
-                    "min-h-0 flex flex-1 flex-col",
+                  (isDocsRoute || isChatRoute) && "min-h-0 flex flex-1 flex-col",
                 )}
               >
                 <Routes>
@@ -590,9 +561,7 @@ export default function App() {
                   ))}
                   <Route
                     path="*"
-                    element={
-                      <UnknownRouteFallback pluginsLoading={pluginsLoading} />
-                    }
+                    element={<UnknownRouteFallback pluginsLoading={pluginsLoading} />}
                   />
                 </Routes>
 
@@ -638,9 +607,7 @@ export default function App() {
 function SidebarNavLink({ closeMobile, item, t }: SidebarNavLinkProps) {
   const { path, label, labelKey, icon: Icon } = item;
 
-  const navLabel = labelKey
-    ? ((t.app.nav as Record<string, string>)[labelKey] ?? label)
-    : label;
+  const navLabel = labelKey ? ((t.app.nav as Record<string, string>)[labelKey] ?? label) : label;
 
   return (
     <li>
@@ -652,7 +619,7 @@ function SidebarNavLink({ closeMobile, item, t }: SidebarNavLinkProps) {
           cn(
             "group relative flex items-center gap-3",
             "px-5 py-2.5",
-            "font-mondwest text-[0.8rem] tracking-[0.12em]",
+            "text-[0.8rem] tracking-[0.12em]",
             "whitespace-nowrap transition-colors cursor-pointer",
             "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-midground",
             isActive ? "text-midground" : "opacity-60 hover:opacity-100",
@@ -689,8 +656,7 @@ function SidebarNavLink({ closeMobile, item, t }: SidebarNavLinkProps) {
 function SidebarSystemActions({ onNavigate }: { onNavigate: () => void }) {
   const { t } = useI18n();
   const navigate = useNavigate();
-  const { activeAction, isBusy, isRunning, pendingAction, runAction } =
-    useSystemActions();
+  const { activeAction, isBusy, isRunning, pendingAction, runAction } = useSystemActions();
 
   const items: SystemActionItem[] = [
     {
@@ -717,18 +683,9 @@ function SidebarSystemActions({ onNavigate }: { onNavigate: () => void }) {
   };
 
   return (
-    <div
-      className={cn(
-        "shrink-0 flex flex-col",
-        "border-t border-current/10",
-        "py-1",
-      )}
-    >
+    <div className={cn("shrink-0 flex flex-col", "border-t border-current/10", "py-1")}>
       <span
-        className={cn(
-          "px-5 pt-0.5 pb-0.5",
-          "font-mondwest text-[0.6rem] tracking-[0.15em] uppercase opacity-30",
-        )}
+        className={cn("px-5 pt-0.5 pb-0.5", "text-[0.6rem] tracking-[0.15em] uppercase opacity-30")}
       >
         {t.app.system}
       </span>
@@ -738,8 +695,7 @@ function SidebarSystemActions({ onNavigate }: { onNavigate: () => void }) {
       <ul className="flex flex-col">
         {items.map(({ action, icon: Icon, label, runningLabel, spin }) => {
           const isPending = pendingAction === action;
-          const isActionRunning =
-            activeAction === action && isRunning && !isPending;
+          const isActionRunning = activeAction === action && isRunning && !isPending;
           const busy = isPending || isActionRunning;
           const displayLabel = isActionRunning ? runningLabel : label;
           const disabled = isBusy && !busy;
@@ -753,11 +709,9 @@ function SidebarSystemActions({ onNavigate }: { onNavigate: () => void }) {
                 active={busy}
                 className={cn(
                   "gap-3 px-5 py-1.5 whitespace-nowrap",
-                  "font-mondwest text-[0.75rem] tracking-[0.1em]",
+                  "text-[0.75rem] tracking-[0.1em]",
                   "transition-opacity",
-                  busy
-                    ? "text-midground opacity-100"
-                    : "opacity-60 hover:opacity-100",
+                  busy ? "text-midground opacity-100" : "opacity-60 hover:opacity-100",
                   "disabled:opacity-30",
                 )}
               >

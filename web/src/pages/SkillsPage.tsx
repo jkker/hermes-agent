@@ -52,10 +52,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   ui: "UI",
 };
 
-function prettyCategory(
-  raw: string | null | undefined,
-  generalLabel: string,
-): string {
+function prettyCategory(raw: string | null | undefined, generalLabel: string): string {
   if (!raw) return generalLabel;
   if (CATEGORY_LABELS[raw]) return CATEGORY_LABELS[raw];
   return raw
@@ -64,10 +61,7 @@ function prettyCategory(
     .join(" ");
 }
 
-const TOOLSET_ICONS: Record<
-  string,
-  React.ComponentType<{ className?: string }>
-> = {
+const TOOLSET_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   computer: Cpu,
   web: Globe,
   security: Shield,
@@ -79,9 +73,7 @@ const TOOLSET_ICONS: Record<
   automation: Zap,
 };
 
-function toolsetIcon(
-  name: string,
-): React.ComponentType<{ className?: string }> {
+function toolsetIcon(name: string): React.ComponentType<{ className?: string }> {
   const lower = name.toLowerCase();
   for (const [key, icon] of Object.entries(TOOLSET_ICONS)) {
     if (lower.includes(key)) return icon;
@@ -121,14 +113,9 @@ export default function SkillsPage() {
     try {
       await api.toggleSkill(skill.name, !skill.enabled);
       setSkills((prev) =>
-        prev.map((s) =>
-          s.name === skill.name ? { ...s, enabled: !s.enabled } : s,
-        ),
+        prev.map((s) => (s.name === skill.name ? { ...s, enabled: !s.enabled } : s)),
       );
-      showToast(
-        `${skill.name} ${skill.enabled ? t.common.disabled : t.common.enabled}`,
-        "success",
-      );
+      showToast(`${skill.name} ${skill.enabled ? t.common.disabled : t.common.enabled}`, "success");
     } catch {
       showToast(`${t.common.failedToToggle} ${skill.name}`, "error");
     } finally {
@@ -156,14 +143,9 @@ export default function SkillsPage() {
 
   const activeSkills = useMemo(() => {
     if (isSearching) return [];
-    if (!activeCategory)
-      return [...skills].sort((a, b) => a.name.localeCompare(b.name));
+    if (!activeCategory) return [...skills].sort((a, b) => a.name.localeCompare(b.name));
     return skills
-      .filter((s) =>
-        activeCategory === "__none__"
-          ? !s.category
-          : s.category === activeCategory,
-      )
+      .filter((s) => (activeCategory === "__none__" ? !s.category : s.category === activeCategory))
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [skills, activeCategory, isSearching]);
 
@@ -264,7 +246,7 @@ export default function SkillsPage() {
             >
               <div className="hidden sm:flex items-center gap-2 px-3 py-2 border-b border-border">
                 <Filter className="h-3 w-3 text-muted-foreground" />
-                <span className="font-mondwest text-[0.65rem] tracking-[0.12em] uppercase text-muted-foreground">
+                <span className="text-[0.65rem] tracking-[0.12em] uppercase text-muted-foreground">
                   {t.skills.filters}
                 </span>
               </div>
@@ -291,42 +273,36 @@ export default function SkillsPage() {
                 />
               </div>
 
-              {view === "skills" &&
-                !isSearching &&
-                allCategories.length > 0 && (
-                  <div className="hidden sm:flex flex-col border-t border-border">
-                    <div className="px-3 pt-2 pb-1 font-mondwest text-[0.6rem] tracking-[0.12em] uppercase text-muted-foreground/70">
-                      {t.skills.categories}
-                    </div>
-                    <div className="flex flex-col p-2 pt-1 gap-px max-h-[calc(100vh-340px)] overflow-y-auto">
-                      {allCategories.map(({ key, name, count }) => {
-                        const isActive = activeCategory === key;
-
-                        return (
-                          <ListItem
-                            key={key}
-                            active={isActive}
-                            onClick={() =>
-                              setActiveCategory(isActive ? null : key)
-                            }
-                            className="rounded-sm px-2 py-1 text-[11px]"
-                          >
-                            <span className="flex-1 truncate">{name}</span>
-                            <span
-                              className={`text-[10px] tabular-nums ${
-                                isActive
-                                  ? "text-foreground/60"
-                                  : "text-muted-foreground/50"
-                              }`}
-                            >
-                              {count}
-                            </span>
-                          </ListItem>
-                        );
-                      })}
-                    </div>
+              {view === "skills" && !isSearching && allCategories.length > 0 && (
+                <div className="hidden sm:flex flex-col border-t border-border">
+                  <div className="px-3 pt-2 pb-1 text-[0.6rem] tracking-[0.12em] uppercase text-muted-foreground/70">
+                    {t.skills.categories}
                   </div>
-                )}
+                  <div className="flex flex-col p-2 pt-1 gap-px max-h-[calc(100vh-340px)] overflow-y-auto">
+                    {allCategories.map(({ key, name, count }) => {
+                      const isActive = activeCategory === key;
+
+                      return (
+                        <ListItem
+                          key={key}
+                          active={isActive}
+                          onClick={() => setActiveCategory(isActive ? null : key)}
+                          className="rounded-sm px-2 py-1 text-[11px]"
+                        >
+                          <span className="flex-1 truncate">{name}</span>
+                          <span
+                            className={`text-[10px] tabular-nums ${
+                              isActive ? "text-foreground/60" : "text-muted-foreground/50"
+                            }`}
+                          >
+                            {count}
+                          </span>
+                        </ListItem>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </aside>
@@ -343,10 +319,7 @@ export default function SkillsPage() {
                   <Badge tone="secondary" className="text-[10px]">
                     {t.skills.resultCount
                       .replace("{count}", String(searchMatchedSkills.length))
-                      .replace(
-                        "{s}",
-                        searchMatchedSkills.length !== 1 ? "s" : "",
-                      )}
+                      .replace("{s}", searchMatchedSkills.length !== 1 ? "s" : "")}
                   </Badge>
                 </div>
               </CardHeader>
@@ -394,9 +367,7 @@ export default function SkillsPage() {
               <CardContent className="px-4 pb-4">
                 {activeSkills.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-8">
-                    {skills.length === 0
-                      ? t.skills.noSkills
-                      : t.skills.noSkillsMatch}
+                    {skills.length === 0 ? t.skills.noSkills : t.skills.noSkillsMatch}
                   </p>
                 ) : (
                   <div className="grid gap-1">
@@ -426,9 +397,7 @@ export default function SkillsPage() {
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {filteredToolsets.map((ts) => {
                     const TsIcon = toolsetIcon(ts.name);
-                    const labelText =
-                      ts.label.replace(/^[\p{Emoji}\s]+/u, "").trim() ||
-                      ts.name;
+                    const labelText = ts.label.replace(/^[\p{Emoji}\s]+/u, "").trim() || ts.name;
 
                     return (
                       <Card key={ts.name} className="relative">
@@ -437,21 +406,15 @@ export default function SkillsPage() {
                             <TsIcon className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
-                                <span className="font-medium text-sm">
-                                  {labelText}
-                                </span>
+                                <span className="font-medium text-sm">{labelText}</span>
                                 <Badge
                                   tone={ts.enabled ? "success" : "outline"}
                                   className="text-[10px]"
                                 >
-                                  {ts.enabled
-                                    ? t.common.active
-                                    : t.common.inactive}
+                                  {ts.enabled ? t.common.active : t.common.inactive}
                                 </Badge>
                               </div>
-                              <p className="text-xs text-muted-foreground mb-2">
-                                {ts.description}
-                              </p>
+                              <p className="text-xs text-muted-foreground mb-2">{ts.description}</p>
                               {ts.enabled && !ts.configured && (
                                 <p className="text-[10px] text-amber-300/80 mb-2">
                                   {t.skills.setupNeeded}
@@ -473,10 +436,7 @@ export default function SkillsPage() {
                               {ts.tools.length === 0 && (
                                 <span className="text-[10px] text-muted-foreground/60">
                                   {ts.enabled
-                                    ? t.skills.toolsetLabel.replace(
-                                        "{name}",
-                                        ts.name,
-                                      )
+                                    ? t.skills.toolsetLabel.replace("{name}", ts.name)
                                     : t.skills.disabledForCli}
                                 </span>
                               )}
@@ -497,20 +457,11 @@ export default function SkillsPage() {
   );
 }
 
-function SkillRow({
-  skill,
-  toggling,
-  onToggle,
-  noDescriptionLabel,
-}: SkillRowProps) {
+function SkillRow({ skill, toggling, onToggle, noDescriptionLabel }: SkillRowProps) {
   return (
     <div className="group flex items-start gap-3 px-3 py-2.5 transition-colors hover:bg-muted/40">
       <div className="pt-0.5 shrink-0">
-        <Switch
-          checked={skill.enabled}
-          onCheckedChange={onToggle}
-          disabled={toggling}
-        />
+        <Switch checked={skill.enabled} onCheckedChange={onToggle} disabled={toggling} />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
@@ -537,7 +488,7 @@ function PanelItem({ active, icon: Icon, label, onClick }: PanelItemProps) {
       onClick={onClick}
       className={cn(
         "rounded-sm whitespace-nowrap px-2.5 py-1.5",
-        "font-mondwest text-[0.7rem] tracking-[0.08em] uppercase",
+        "text-[0.7rem] tracking-[0.08em] uppercase",
         active && "bg-foreground/90 text-background hover:text-background",
       )}
     >

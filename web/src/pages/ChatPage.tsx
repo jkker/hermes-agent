@@ -36,11 +36,7 @@ import { useI18n } from "@/i18n";
 import { api } from "@/lib/api";
 import { PluginSlot } from "@/plugins";
 
-function buildWsUrl(
-  token: string,
-  resume: string | null,
-  channel: string,
-): string {
+function buildWsUrl(token: string, resume: string | null, channel: string): string {
   const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
   const qs = new URLSearchParams({ token, channel });
   if (resume) qs.set("resume", resume);
@@ -143,9 +139,7 @@ export default function ChatPage({ isActive = true }: { isActive?: boolean }) {
     typeof document !== "undefined" ? document.body : null,
   );
   const [narrow, setNarrow] = useState(() =>
-    typeof window !== "undefined"
-      ? window.matchMedia("(max-width: 1023px)").matches
-      : false,
+    typeof window !== "undefined" ? window.matchMedia("(max-width: 1023px)").matches : false,
   );
 
   // The dashboard keeps ChatPage mounted persistently so the PTY survives tab
@@ -339,8 +333,7 @@ export default function ChatPage({ isActive = true }: { isActive?: boolean }) {
       return true;
     });
 
-    const isMac =
-      typeof navigator !== "undefined" && /Mac/i.test(navigator.platform);
+    const isMac = typeof navigator !== "undefined" && /Mac/i.test(navigator.platform);
 
     term.attachCustomKeyEventHandler((ev) => {
       if (ev.type !== "keydown") return true;
@@ -446,10 +439,7 @@ export default function ChatPage({ isActive = true }: { isActive?: boolean }) {
         webgl.onContextLoss(() => webgl.dispose());
         term.loadAddon(webgl);
       } catch (err) {
-        console.warn(
-          "[hermes-chat] WebGL renderer unavailable; falling back to default",
-          err,
-        );
+        console.warn("[hermes-chat] WebGL renderer unavailable; falling back to default", err);
       }
     }
 
@@ -490,9 +480,7 @@ export default function ChatPage({ isActive = true }: { isActive?: boolean }) {
       const w = terminalTierWidthPx(host);
       const nextSize = terminalFontSizeForWidth(w);
       const nextLh = terminalLineHeightForWidth(w);
-      const fontChanged =
-        term.options.fontSize !== nextSize ||
-        term.options.lineHeight !== nextLh;
+      const fontChanged = term.options.fontSize !== nextSize || term.options.lineHeight !== nextLh;
       if (fontChanged) {
         term.options.fontSize = nextSize;
         term.options.lineHeight = nextLh;
@@ -509,11 +497,7 @@ export default function ChatPage({ isActive = true }: { isActive?: boolean }) {
           /* ignore */
         }
       }
-      if (
-        fontChanged &&
-        wsRef.current &&
-        wsRef.current.readyState === WebSocket.OPEN
-      ) {
+      if (fontChanged && wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
         wsRef.current.send(`\x1b[RESIZE:${term.cols};${term.rows}]`);
       }
     };
@@ -639,10 +623,7 @@ export default function ChatPage({ isActive = true }: { isActive?: boolean }) {
       onResizeDisposable.dispose();
       if (metricsDebounce) clearTimeout(metricsDebounce);
       window.removeEventListener("resize", scheduleSyncTerminalMetrics);
-      window.visualViewport?.removeEventListener(
-        "resize",
-        scheduleSyncTerminalMetrics,
-      );
+      window.visualViewport?.removeEventListener("resize", scheduleSyncTerminalMetrics);
       ro.disconnect();
       if (hostSyncRaf) cancelAnimationFrame(hostSyncRaf);
       if (settleRaf1) cancelAnimationFrame(settleRaf1);
@@ -685,14 +666,9 @@ export default function ChatPage({ isActive = true }: { isActive?: boolean }) {
         raf2 = 0;
         syncMetricsRef.current?.();
         const host = hostRef.current;
-        const active = typeof document !== "undefined"
-          ? document.activeElement
-          : null;
+        const active = typeof document !== "undefined" ? document.activeElement : null;
         const focusIsElsewhereInChatPage =
-          active !== null &&
-          active !== document.body &&
-          host !== null &&
-          !host.contains(active);
+          active !== null && active !== document.body && host !== null && !host.contains(active);
         if (!focusIsElsewhereInChatPage) {
           termRef.current?.focus();
         }
@@ -733,10 +709,7 @@ export default function ChatPage({ isActive = true }: { isActive?: boolean }) {
             ghost
             aria-label={t.app.closeModelTools}
             onClick={closeMobilePanel}
-            className={cn(
-              "fixed inset-0 z-[55] p-0 block",
-              "bg-black/60 backdrop-blur-sm",
-            )}
+            className={cn("fixed inset-0 z-[55] p-0 block", "bg-black/60 backdrop-blur-sm")}
           />
         )}
 
@@ -745,16 +718,14 @@ export default function ChatPage({ isActive = true }: { isActive?: boolean }) {
           role="complementary"
           aria-label={modelToolsLabel}
           className={cn(
-            "font-mondwest fixed top-0 right-0 z-[60] flex h-dvh max-h-dvh w-64 min-w-0 flex-col antialiased",
+            "fixed top-0 right-0 z-[60] flex h-dvh max-h-dvh w-64 min-w-0 flex-col antialiased",
             "border-l border-current/20 text-midground",
             "bg-background-base/95 backdrop-blur-sm",
             "transition-transform duration-200 ease-out",
             "[background:var(--component-sidebar-background)]",
             "[clip-path:var(--component-sidebar-clip-path)]",
             "[border-image:var(--component-sidebar-border-image)]",
-            mobilePanelOpen
-              ? "translate-x-0"
-              : "pointer-events-none translate-x-full",
+            mobilePanelOpen ? "translate-x-0" : "pointer-events-none translate-x-full",
           )}
         >
           <div
@@ -817,10 +788,7 @@ export default function ChatPage({ isActive = true }: { isActive?: boolean }) {
             boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
           }}
         >
-          <div
-            ref={hostRef}
-            className="hermes-chat-xterm-host min-h-0 min-w-0 flex-1"
-          />
+          <div ref={hostRef} className="hermes-chat-xterm-host min-h-0 min-w-0 flex-1" />
 
           <Button
             ghost

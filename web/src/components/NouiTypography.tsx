@@ -43,7 +43,7 @@ export const Typography = forwardRef<HTMLElement, TypographyProps>(function Typo
         compressed && "font-compressed",
         courier && "font-courier",
         expanded && "font-expanded",
-        mondwest && "font-mondwest tracking-[0.1875rem]",
+        mondwest && "tracking-[0.1875rem]",
         mono && "font-mono",
         (!hasFontVariant || sans) && "font-sans",
         variant && variantClasses[variant],
@@ -59,5 +59,13 @@ export const H2 = forwardRef<HTMLHeadingElement, Omit<TypographyProps, "as">>(fu
   { className, variant = "lg", ...props },
   ref,
 ) {
-  return <Typography as="h2" className={cn("font-bold", className)} variant={variant} ref={ref} {...props} />;
+  return (
+    <Typography
+      as="h2"
+      className={cn("font-bold", className)}
+      variant={variant}
+      ref={ref}
+      {...props}
+    />
+  );
 });

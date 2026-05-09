@@ -4,9 +4,6 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "sync-assets": "rm -rf public/fonts public/ds-assets && cp -r node_modules/@nous-research/ui/dist/fonts public/fonts && cp -r node_modules/@nous-research/ui/dist/assets public/ds-assets",
-    "predev": "npm run sync-assets",
-    "prebuild": "npm run sync-assets",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
@@ -48,5 +45,6 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.56.1",
     "vite": "^7.3.1"
-  }
+  },
+  "packageManager": "npm@11.14.1"
 }

@@ -1,10 +1,4 @@
-import {
-  useEffect,
-  useLayoutEffect,
-  useState,
-  useCallback,
-  useRef,
-} from "react";
+import { useEffect, useLayoutEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   AlertTriangle,
@@ -25,12 +19,7 @@ import {
   Play,
 } from "lucide-react";
 import { api } from "@/lib/api";
-import type {
-  SessionInfo,
-  SessionMessage,
-  SessionSearchResult,
-  StatusResponse,
-} from "@/lib/api";
+import type { SessionInfo, SessionMessage, SessionSearchResult, StatusResponse } from "@/lib/api";
 import { timeAgo } from "@/lib/utils";
 import { Markdown } from "@/components/Markdown";
 import { PlatformsCard } from "@/components/PlatformsCard";
@@ -50,15 +39,14 @@ import { usePageHeader } from "@/contexts/usePageHeader";
 import { PluginSlot } from "@/plugins";
 import { isDashboardEmbeddedChatEnabled } from "@/lib/dashboard-flags";
 
-const SOURCE_CONFIG: Record<string, { icon: typeof Terminal; color: string }> =
-  {
-    cli: { icon: Terminal, color: "text-primary" },
-    telegram: { icon: MessageCircle, color: "text-[oklch(0.65_0.15_250)]" },
-    discord: { icon: Hash, color: "text-[oklch(0.65_0.15_280)]" },
-    slack: { icon: MessageSquare, color: "text-[oklch(0.7_0.15_155)]" },
-    whatsapp: { icon: Globe, color: "text-success" },
-    cron: { icon: Clock, color: "text-warning" },
-  };
+const SOURCE_CONFIG: Record<string, { icon: typeof Terminal; color: string }> = {
+  cli: { icon: Terminal, color: "text-primary" },
+  telegram: { icon: MessageCircle, color: "text-[oklch(0.65_0.15_250)]" },
+  discord: { icon: Hash, color: "text-[oklch(0.65_0.15_280)]" },
+  slack: { icon: MessageSquare, color: "text-[oklch(0.7_0.15_155)]" },
+  whatsapp: { icon: Globe, color: "text-success" },
+  cron: { icon: Clock, color: "text-warning" },
+};
 
 /** Render an FTS5 snippet with highlighted matches.
  *  The backend wraps matches in >>> and <<< delimiters. */
@@ -82,11 +70,7 @@ function SnippetHighlight({ snippet }: { snippet: string }) {
   if (last < snippet.length) {
     parts.push(snippet.slice(last));
   }
-  return (
-    <p className="text-xs text-muted-foreground/80 truncate max-w-lg mt-0.5">
-      {parts}
-    </p>
-  );
+  return <p className="text-xs text-muted-foreground/80 truncate max-w-lg mt-0.5">{parts}</p>;
 }
 
 function ToolCallBlock({
@@ -112,14 +96,8 @@ function ToolCallBlock({
         aria-expanded={open}
         className="px-3 py-2 text-xs text-warning hover:bg-warning/10 hover:text-warning"
       >
-        {open ? (
-          <ChevronDown className="h-3 w-3" />
-        ) : (
-          <ChevronRight className="h-3 w-3" />
-        )}
-        <span className="font-mono-ui font-medium">
-          {toolCall.function.name}
-        </span>
+        {open ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+        <span className="font-mono-ui font-medium">{toolCall.function.name}</span>
         <span className="text-warning/50 ml-auto">{toolCall.id}</span>
       </ListItem>
       {open && (
@@ -131,19 +109,10 @@ function ToolCallBlock({
   );
 }
 
-function MessageBubble({
-  msg,
-  highlight,
-}: {
-  msg: SessionMessage;
-  highlight?: string;
-}) {
+function MessageBubble({ msg, highlight }: { msg: SessionMessage; highlight?: string }) {
   const { t } = useI18n();
 
-  const ROLE_STYLES: Record<
-    string,
-    { bg: string; text: string; label: string }
-  > = {
+  const ROLE_STYLES: Record<string, { bg: string; text: string; label: string }> = {
     user: {
       bg: "bg-primary/10",
       text: "text-primary",
@@ -167,9 +136,7 @@ function MessageBubble({
   };
 
   const style = ROLE_STYLES[msg.role] ?? ROLE_STYLES.system;
-  const label = msg.tool_name
-    ? `${t.sessions.roles.tool}: ${msg.tool_name}`
-    : style.label;
+  const label = msg.tool_name ? `${t.sessions.roles.tool}: ${msg.tool_name}` : style.label;
 
   // Check if any search term appears as a prefix of any word in content
   const isHit = (() => {
@@ -180,8 +147,7 @@ function MessageBubble({
   })();
 
   // Split search query into terms for inline highlighting
-  const highlightTerms =
-    isHit && highlight ? highlight.split(/\s+/).filter(Boolean) : undefined;
+  const highlightTerms = isHit && highlight ? highlight.split(/\s+/).filter(Boolean) : undefined;
 
   return (
     <div
@@ -196,9 +162,7 @@ function MessageBubble({
           </Badge>
         )}
         {msg.timestamp && (
-          <span className="text-[10px] text-muted-foreground">
-            {timeAgo(msg.timestamp)}
-          </span>
+          <span className="text-[10px] text-muted-foreground">{timeAgo(msg.timestamp)}</span>
         )}
       </div>
       {msg.content &&
@@ -221,13 +185,7 @@ function MessageBubble({
 }
 
 /** Message list with auto-scroll to first search hit. */
-function MessageList({
-  messages,
-  highlight,
-}: {
-  messages: SessionMessage[];
-  highlight?: string;
-}) {
+function MessageList({ messages, highlight }: { messages: SessionMessage[]; highlight?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -243,10 +201,7 @@ function MessageList({
   }, [messages, highlight]);
 
   return (
-    <div
-      ref={containerRef}
-      className="flex flex-col gap-3 max-h-[600px] overflow-y-auto pr-2"
-    >
+    <div ref={containerRef} className="flex flex-col gap-3 max-h-[600px] overflow-y-auto pr-2">
       {messages.map((msg, i) => (
         <MessageBubble key={i} msg={msg} highlight={highlight} />
       ))}
@@ -288,18 +243,17 @@ function SessionRow({
     }
   }, [isExpanded, session.id, messages, loading]);
 
-  const sourceInfo = (session.source
-    ? SOURCE_CONFIG[session.source]
-    : null) ?? { icon: Globe, color: "text-muted-foreground" };
+  const sourceInfo = (session.source ? SOURCE_CONFIG[session.source] : null) ?? {
+    icon: Globe,
+    color: "text-muted-foreground",
+  };
   const SourceIcon = sourceInfo.icon;
   const hasTitle = session.title && session.title !== "Untitled";
 
   return (
     <div
       className={`border overflow-hidden transition-colors ${
-        session.is_active
-          ? "border-success/30 bg-success/[0.03]"
-          : "border-border"
+        session.is_active ? "border-success/30 bg-success/[0.03]" : "border-border"
       }`}
     >
       <div
@@ -392,9 +346,7 @@ function SessionRow({
               <Spinner className="text-xl text-primary" />
             </div>
           )}
-          {error && (
-            <p className="text-sm text-destructive py-4 text-center">{error}</p>
-          )}
+          {error && <p className="text-sm text-destructive py-4 text-center">{error}</p>}
           {messages && messages.length === 0 && (
             <p className="text-sm text-muted-foreground py-4 text-center">
               {t.sessions.noMessages}
@@ -417,9 +369,7 @@ export default function SessionsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [searchResults, setSearchResults] = useState<
-    SessionSearchResult[] | null
-  >(null);
+  const [searchResults, setSearchResults] = useState<SessionSearchResult[] | null>(null);
   const [searching, setSearching] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
   const logScrollRef = useRef<HTMLPreElement | null>(null);
@@ -558,12 +508,7 @@ export default function SessionsPage() {
           throw new Error("delete failed");
         }
       },
-      [
-        expandedId,
-        showToast,
-        t.sessions.sessionDeleted,
-        t.sessions.failedToDelete,
-      ],
+      [expandedId, showToast, t.sessions.sessionDeleted, t.sessions.failedToDelete],
     ),
   });
 
@@ -581,16 +526,10 @@ export default function SessionsPage() {
 
   // When searching, filter sessions to those with FTS matches;
   // when not searching, show all sessions
-  const filtered = searchResults
-    ? sessions.filter((s) => snippetMap.has(s.id))
-    : sessions;
+  const filtered = searchResults ? sessions.filter((s) => snippetMap.has(s.id)) : sessions;
 
-  const platformEntries = status
-    ? Object.entries(status.gateway_platforms ?? {})
-    : [];
-  const recentSessions = overviewSessions
-    .filter((s) => !s.is_active)
-    .slice(0, 5);
+  const platformEntries = status ? Object.entries(status.gateway_platforms ?? {}) : [];
+  const recentSessions = overviewSessions.filter((s) => !s.is_active).slice(0, 5);
 
   const alerts: { message: string; detail?: string }[] = [];
   if (status) {
@@ -605,9 +544,7 @@ export default function SessionsPage() {
     );
     for (const [name, info] of failedPlatformEntries) {
       const stateLabel =
-        info.state === "fatal"
-          ? t.status.platformError
-          : t.status.platformDisconnected;
+        info.state === "fatal" ? t.status.platformError : t.status.platformDisconnected;
       alerts.push({
         message: `${name.charAt(0).toUpperCase() + name.slice(1)} ${stateLabel}`,
         detail: info.error_message ?? undefined,
@@ -648,13 +585,9 @@ export default function SessionsPage() {
             <div className="flex flex-col gap-2 min-w-0">
               {alerts.map((alert, i) => (
                 <div key={i}>
-                  <p className="text-sm font-medium text-destructive">
-                    {alert.message}
-                  </p>
+                  <p className="text-sm font-medium text-destructive">{alert.message}</p>
                   {alert.detail && (
-                    <p className="text-xs text-destructive/70 mt-0.5">
-                      {alert.detail}
-                    </p>
+                    <p className="text-xs text-destructive/70 mt-0.5">{alert.detail}</p>
                   )}
                 </div>
               ))}
@@ -677,10 +610,8 @@ export default function SessionsPage() {
                 <Spinner className="shrink-0 text-[0.875rem] text-muted-foreground" />
               )}
 
-              <span className="text-xs font-mondwest tracking-[0.12em] truncate">
-                {activeAction === "restart"
-                  ? t.status.restartGateway
-                  : t.status.updateHermes}
+              <span className="text-xs tracking-[0.12em] truncate">
+                {activeAction === "restart" ? t.status.restartGateway : t.status.updateHermes}
               </span>
 
               <Badge
@@ -727,18 +658,14 @@ export default function SessionsPage() {
         </div>
       )}
 
-      {platformEntries.length > 0 && status && (
-        <PlatformsCard platforms={platformEntries} />
-      )}
+      {platformEntries.length > 0 && status && <PlatformsCard platforms={platformEntries} />}
 
       {recentSessions.length > 0 && (
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
               <Clock className="h-5 w-5 text-muted-foreground" />
-              <CardTitle className="text-base">
-                {t.status.recentSessions}
-              </CardTitle>
+              <CardTitle className="text-base">{t.status.recentSessions}</CardTitle>
             </div>
           </CardHeader>
 
@@ -757,21 +684,15 @@ export default function SessionsPage() {
                     <span className="font-mono-ui">
                       {(s.model ?? t.common.unknown).split("/").pop()}
                     </span>{" "}
-                    · {s.message_count} {t.common.msgs} ·{" "}
-                    {timeAgo(s.last_active)}
+                    · {s.message_count} {t.common.msgs} · {timeAgo(s.last_active)}
                   </span>
 
                   {s.preview && (
-                    <span className="text-xs text-muted-foreground/70 truncate">
-                      {s.preview}
-                    </span>
+                    <span className="text-xs text-muted-foreground/70 truncate">{s.preview}</span>
                   )}
                 </div>
 
-                <Badge
-                  tone="outline"
-                  className="text-[10px] shrink-0 self-start sm:self-center"
-                >
+                <Badge tone="outline" className="text-[10px] shrink-0 self-start sm:self-center">
                   <Database className="mr-1 h-3 w-3" />
                   {s.source ?? "local"}
                 </Badge>
@@ -788,9 +709,7 @@ export default function SessionsPage() {
             {search ? t.sessions.noMatch : t.sessions.noSessions}
           </p>
           {!search && (
-            <p className="text-xs mt-1 text-muted-foreground/60">
-              {t.sessions.startConversation}
-            </p>
+            <p className="text-xs mt-1 text-muted-foreground/60">{t.sessions.startConversation}</p>
           )}
         </div>
       ) : (
@@ -803,9 +722,7 @@ export default function SessionsPage() {
                 snippet={snippetMap.get(s.id)}
                 searchQuery={search || undefined}
                 isExpanded={expandedId === s.id}
-                onToggle={() =>
-                  setExpandedId((prev) => (prev === s.id ? null : s.id))
-                }
+                onToggle={() => setExpandedId((prev) => (prev === s.id ? null : s.id))}
                 onDelete={() => sessionDelete.requestDelete(s.id)}
                 resumeInChatEnabled={resumeInChatEnabled}
               />
@@ -815,8 +732,8 @@ export default function SessionsPage() {
           {!searchResults && total > PAGE_SIZE && (
             <div className="flex items-center justify-between pt-2">
               <span className="text-xs text-muted-foreground">
-                {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, total)}{" "}
-                {t.common.of} {total}
+                {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, total)} {t.common.of}{" "}
+                {total}
               </span>
               <div className="flex items-center gap-1">
                 <Button
@@ -829,8 +746,7 @@ export default function SessionsPage() {
                   <ChevronLeft />
                 </Button>
                 <span className="text-xs text-muted-foreground px-2">
-                  {t.common.page} {page + 1} {t.common.of}{" "}
-                  {Math.ceil(total / PAGE_SIZE)}
+                  {t.common.page} {page + 1} {t.common.of} {Math.ceil(total / PAGE_SIZE)}
                 </span>
                 <Button
                   outlined

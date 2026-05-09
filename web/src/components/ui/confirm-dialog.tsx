@@ -22,9 +22,7 @@ export function ConfirmDialog({
     if (!open) return;
 
     const prevActive = document.activeElement as HTMLElement | null;
-    dialogRef.current
-      ?.querySelector<HTMLButtonElement>("[data-confirm]")
-      ?.focus();
+    dialogRef.current?.querySelector<HTMLButtonElement>("[data-confirm]")?.focus();
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -71,10 +69,7 @@ export function ConfirmDialog({
       >
         <div className="flex items-start gap-3 p-4 border-b border-border">
           {destructive && (
-            <div
-              aria-hidden
-              className="mt-0.5 shrink-0 text-destructive"
-            >
+            <div aria-hidden className="mt-0.5 shrink-0 text-destructive">
               <AlertTriangle className="h-4 w-4" />
             </div>
           )}
@@ -88,10 +83,7 @@ export function ConfirmDialog({
             </h2>
 
             {description && (
-              <p
-                id="confirm-dialog-desc"
-                className="font-mondwest text-xs text-muted-foreground leading-relaxed"
-              >
+              <p id="confirm-dialog-desc" className="text-xs text-muted-foreground leading-relaxed">
                 {description}
               </p>
             )}
@@ -99,12 +91,7 @@ export function ConfirmDialog({
         </div>
 
         <div className="flex items-center justify-end gap-2 p-3">
-          <Button
-            type="button"
-            outlined
-            onClick={onCancel}
-            disabled={loading}
-          >
+          <Button type="button" outlined onClick={onCancel} disabled={loading}>
             {cancelLabel}
           </Button>
           <Button
