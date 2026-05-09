@@ -129,6 +129,11 @@ class TestGenerateZsh:
         out = generate_zsh(_make_parser())
         assert "#compdef hermes" in out
 
+    def test_top_level_option_specs_use_valid_zsh_arguments_syntax(self):
+        out = generate_zsh(_make_parser())
+        assert "'(-h --help)'{-h,--help}'[Show help and exit]'" in out
+        assert "'(-h --help){-h,--help}[Show help and exit]'" not in out
+
     def test_top_level_commands_present(self):
         out = generate_zsh(_make_parser())
         for cmd in ("chat", "gateway", "sessions", "version"):

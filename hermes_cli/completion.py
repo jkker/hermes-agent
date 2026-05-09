@@ -199,8 +199,9 @@ def generate_zsh(parser: argparse.ArgumentParser) -> str:
 
     return f"""#compdef hermes
 # Hermes Agent zsh completion
-# Add to ~/.zshrc:
-#   eval "$(hermes completion zsh)"
+# Install into an fpath directory, then register it:
+#   hermes completion zsh > "${{fpath[1]}}/_hermes"
+#   autoload -Uz _hermes && compdef _hermes hermes
 
 _hermes_profiles() {{
     local -a profiles
@@ -216,9 +217,9 @@ _hermes() {{
     typeset -A opt_args
 
     _arguments -C \\
-        '(-h --help){{-h,--help}}[Show help and exit]' \\
-        '(-V --version){{-V,--version}}[Show version and exit]' \\
-        '(-p --profile){{-p,--profile}}[Profile name]:profile:_hermes_profiles' \\
+        '(-h --help)'{{-h,--help}}'[Show help and exit]' \\
+        '(-V --version)'{{-V,--version}}'[Show version and exit]' \\
+        '(-p --profile)'{{-p,--profile}}'[Profile name]:profile:_hermes_profiles' \\
         '1:command:->commands' \\
         '*::arg:->args'
 
