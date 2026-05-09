@@ -268,3 +268,28 @@ class TestSnapshotEndToEnd:
         assert str(fake_n_bin) in output
         # bashrc short-circuited on the interactive guard — its export never ran
         assert "FROM_BASHRC=bashrc-should-not-appear" not in output
+
+    def test_snapshot_preserves_parent_path_precedence(self, tmp_path, monkeypatch):
+        """Caller PATH entries should stay ahead of login-shell prepends."""
+        init_file = tmp_path / "prepend-shim.sh"
+        init_file.write_text('export PATH="/shell-added/bin:$PATH"\n')
+
+        monkeypatch.setenv("HOME", str(tmp_path))
+        monkeypatch.setenv("PATH", "/project/bin:/usr/bin:/bin")
+        monkeypatch.setattr("hermes_constants.get_subprocess_home", lambda: None)
+
+        with patch(
+            "tools.environments.local._read_terminal_shell_init_config",
+            return_value=([str(init_file)], False),
+        ):
+            env = LocalEnvironment(cwd=str(tmp_path), timeout=15)
+            try:
+                result = env.execute('printf "%s" "$PATH"')
+            finally:
+                env.cleanup()
+
+        output = result.get("output", "")
+        path_parts = output.split(":")
+
+        assert path_parts[:3] == ["/project/bin", "/usr/bin", "/bin"]
+        assert "/shell-added/bin" in path_parts

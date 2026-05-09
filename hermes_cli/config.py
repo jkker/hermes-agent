@@ -24,7 +24,7 @@ import tempfile
 import threading
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Any, Optional, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -108,7 +108,6 @@ import yaml
 from hermes_cli.colors import Colors, color
 from hermes_cli.default_soul import DEFAULT_SOUL_MD
 
-
 # =============================================================================
 # Managed mode (NixOS declarative config)
 # =============================================================================
@@ -190,6 +189,7 @@ def format_managed_message(action: str = "modify this Hermes installation") -> s
         "Use your package manager to upgrade or reinstall Hermes."
     )
 
+
 def managed_error(action: str = "modify configuration"):
     """Print user-friendly error for managed mode."""
     print(format_managed_message(action), file=sys.stderr)
@@ -198,6 +198,7 @@ def managed_error(action: str = "modify configuration"):
 # =============================================================================
 # Container-aware CLI (NixOS container mode)
 # =============================================================================
+
 
 def get_container_exec_info() -> Optional[dict]:
     """Read container mode metadata from HERMES_HOME/.container-mode.
@@ -214,6 +215,7 @@ def get_container_exec_info() -> Optional[dict]:
         return None
 
     from hermes_constants import is_container
+
     if is_container():
         return None
 
@@ -251,6 +253,7 @@ def get_container_exec_info() -> Optional[dict]:
 # Re-export from hermes_constants — canonical definition lives there.
 from hermes_constants import get_hermes_home  # noqa: F811,E402
 from utils import atomic_replace
+
 
 def get_config_path() -> Path:
     """Get the main config file path."""
@@ -2598,7 +2601,10 @@ def get_missing_skill_config_vars() -> List[Dict[str, Any]]:
     config.yaml.  Returns a list of dicts suitable for prompting.
     """
     try:
-        from agent.skill_utils import discover_all_skill_config_vars, SKILL_CONFIG_PREFIX
+        from agent.skill_utils import (
+            SKILL_CONFIG_PREFIX,
+            discover_all_skill_config_vars,
+        )
     except Exception:
         return []
 
@@ -4672,7 +4678,10 @@ def show_config():
     
     # Skill config
     try:
-        from agent.skill_utils import discover_all_skill_config_vars, resolve_skill_config_values
+        from agent.skill_utils import (
+            discover_all_skill_config_vars,
+            resolve_skill_config_values,
+        )
         skill_vars = discover_all_skill_config_vars()
         if skill_vars:
             resolved = resolve_skill_config_values(skill_vars)

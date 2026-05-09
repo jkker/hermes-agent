@@ -47,6 +47,7 @@ def _resolve_safe_cwd(cwd: str) -> str:
 
 # Hermes-internal env vars that should NOT leak into terminal subprocesses.
 _HERMES_PROVIDER_ENV_FORCE_PREFIX = "_HERMES_FORCE_"
+_HERMES_ORIGINAL_PATH_ENV = "_HERMES_ORIGINAL_PATH"
 
 
 def _build_provider_env_blocklist() -> frozenset:
@@ -239,6 +240,35 @@ _SANE_PATH = (
 )
 
 
+def _prefer_hermes_project_paths(path_value: str, hermes_home: str) -> str:
+    """Move project-local Hermes paths to the front of PATH.
+
+    Hermes profiles often inject wrappers under ``{HERMES_HOME}/bin`` that
+    must outrank user-global installs with the same executable names.
+    """
+    if not path_value or not hermes_home:
+        return path_value
+
+    hermes_root = Path(hermes_home).expanduser()
+    preferred = [
+        str(hermes_root / "bin"),
+        str(hermes_root / "node_modules" / ".bin"),
+        str(hermes_root / "hermes-agent" / "venv" / "bin"),
+    ]
+    path_parts = [part for part in path_value.split(os.pathsep) if part]
+    ordered_parts: list[str] = []
+
+    for candidate in preferred:
+        if candidate in path_parts and candidate not in ordered_parts:
+            ordered_parts.append(candidate)
+
+    for part in path_parts:
+        if part not in ordered_parts:
+            ordered_parts.append(part)
+
+    return os.pathsep.join(ordered_parts)
+
+
 def _make_run_env(env: dict) -> dict:
     """Build a run environment with a sane PATH and provider-var stripping."""
     try:
@@ -265,6 +295,19 @@ def _make_run_env(env: dict) -> dict:
     # prepends its MSYS2 /usr/bin equivalent via the shell-init files.
     if not _IS_WINDOWS and "/usr/bin" not in existing_path.split(":"):
         run_env["PATH"] = f"{existing_path}:{_SANE_PATH}" if existing_path else _SANE_PATH
+
+    run_env["PATH"] = _prefer_hermes_project_paths(
+        run_env.get("PATH", ""),
+        run_env.get("HERMES_HOME", ""),
+    )
+
+    # Preserve the parent process PATH order across the login-shell snapshot.
+    # Login rc files may prepend tool-manager shims that outrank project-local
+    # wrappers injected by the caller (for example via mise/pitchfork). The
+    # snapshot bootstrap merges this original PATH back to the front so Hermes
+    # keeps the caller's precedence while still retaining any new shell-added
+    # entries discovered during login.
+    run_env[_HERMES_ORIGINAL_PATH_ENV] = run_env.get("PATH", "")
 
     # Per-profile HOME isolation: redirect system tool configs (git, ssh, gh,
     # npm …) into {HERMES_HOME}/home/ when that directory exists.  Only the

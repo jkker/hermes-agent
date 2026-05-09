@@ -16,6 +16,7 @@ from tools.environments.local import (
     LocalEnvironment,
     _HERMES_PROVIDER_ENV_BLOCKLIST,
     _HERMES_PROVIDER_ENV_FORCE_PREFIX,
+    _HERMES_ORIGINAL_PATH_ENV,
 )
 
 
@@ -23,10 +24,13 @@ def _make_fake_popen(captured: dict):
     """Return a fake Popen constructor that records the env kwarg."""
     def fake_popen(cmd, **kwargs):
         captured["env"] = kwargs.get("env", {})
+        read_fd, write_fd = os.pipe()
+        os.close(write_fd)
+        stdout = os.fdopen(read_fd, "rb", buffering=0)
         proc = MagicMock()
         proc.poll.return_value = 0
         proc.returncode = 0
-        proc.stdout = MagicMock(__iter__=lambda s: iter([]), __next__=lambda s: (_ for _ in ()).throw(StopIteration))
+        proc.stdout = stdout
         proc.stdin = MagicMock()
         return proc
     return fake_popen
@@ -328,3 +332,31 @@ class TestSanePathIncludesHomebrew:
             result = _make_run_env({})
         # Should keep existing PATH unchanged
         assert result["PATH"] == "/usr/bin:/bin"
+
+    def test_make_run_env_records_original_path_for_snapshot_restore(self):
+        """Login-shell snapshots should be able to restore caller PATH order."""
+        from tools.environments.local import _make_run_env
+
+        full_env = {"PATH": "/project/bin:/usr/bin:/bin"}
+        with patch.dict(os.environ, full_env, clear=True):
+            result = _make_run_env({})
+
+        assert result[_HERMES_ORIGINAL_PATH_ENV] == "/project/bin:/usr/bin:/bin"
+
+    def test_make_run_env_prefers_hermes_project_bin(self):
+        """Project-local wrappers should outrank user-global installs."""
+        from tools.environments.local import _make_run_env
+
+        env_map = {
+            "PATH": "/home/user/.local/bin:/workspace/.hermes/bin:/usr/bin:/bin",
+            "HERMES_HOME": "/workspace/.hermes",
+        }
+        with patch.dict(os.environ, env_map, clear=True):
+            result = _make_run_env({})
+
+        assert result["PATH"].split(":")[:3] == [
+            "/workspace/.hermes/bin",
+            "/home/user/.local/bin",
+            "/usr/bin",
+        ]
+        assert result[_HERMES_ORIGINAL_PATH_ENV] == result["PATH"]
